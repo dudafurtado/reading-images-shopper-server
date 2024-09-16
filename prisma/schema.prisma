@@ -1,0 +1,38 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MeasureType {
+  WATER
+  GAS
+}
+
+model Customer {
+  id       Int       @id @default(autoincrement())
+  code     String    @unique
+  measures Measure[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  @@map("customer") 
+}
+
+model Measure {
+  uuid          String      @id @default(uuid())
+  datetime      DateTime
+  type          MeasureType
+  has_confirmed Boolean
+  image_url     String?
+  value         String
+  customer      Customer    @relation(fields: [customer_id], references: [code])
+  customer_id    String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  @@map("measure")
+}
