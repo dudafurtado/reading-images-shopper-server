@@ -1,0 +1,23 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: 'mysql://root:dudinha@db:3306/mydatabase'
+
+  db:
+    image: mysql:8
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydatabase
+
+  mongo:
+    image: mongo
+    ports:
+      - '27017:27017'
