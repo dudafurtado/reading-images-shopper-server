@@ -41,7 +41,18 @@ export class ImagesController {
     if (!appKey) {
       throw new BadGatewayException({
         error_code: 'MISSING_API_KEY',
-        error_description: 'A chave da API não está definida.',
+        error_description: 'A chave da API não está definida',
+      });
+    }
+
+    const userExist = await this.imagesService.findUser(
+      uploadImageDto.customer_code,
+    );
+
+    if (!userExist) {
+      throw new ConflictException({
+        error_code: 'USER_NOT_FOUND',
+        error_description: 'Código do usuário não encontrado',
       });
     }
 
@@ -59,7 +70,7 @@ export class ImagesController {
     if (!measure) {
       throw new NotFoundException({
         error_code: 'MEASURE_NOT_FOUND',
-        error_description: 'Leitura do mês já realizada',
+        error_description: 'Leitura não encontrada',
       });
     }
 
@@ -70,7 +81,10 @@ export class ImagesController {
       });
     }
 
-    await this.imagesService.confirm(confirmImageDto);
+    await this.imagesService.confirm({
+      measure_uuid: confirmImageDto.measure_uuid,
+      confirmed_value: confirmImageDto.confirmed_value,
+    });
 
     return {
       success: true,
@@ -82,20 +96,26 @@ export class ImagesController {
     @Param('customer_code') customerCode: string,
     @Query('measure_type') measureType: 'WATER' | 'GAS',
   ) {
-    const measureTypeCasaInsensitive = measureType.toUpperCase();
-    const validMeasureTypes = ['WATER', 'GAS'];
+    let measures = [];
 
-    if (!validMeasureTypes.includes(measureTypeCasaInsensitive)) {
-      throw new BadRequestException({
-        error_code: 'INVALID_TYPE',
-        error_description: 'Tipo de medição não permitida',
-      });
+    if (measureType) {
+      const measureTypeCasaInsensitive = measureType.toUpperCase();
+      const validMeasureTypes = ['WATER', 'GAS'];
+
+      if (!validMeasureTypes.includes(measureTypeCasaInsensitive)) {
+        throw new BadRequestException({
+          error_code: 'INVALID_TYPE',
+          error_description: 'Tipo de medição não permitida',
+        });
+      }
+
+      measures = await this.imagesService.findMeasuresByCustomerAndType(
+        customerCode,
+        measureType,
+      );
+    } else {
+      measures = await this.imagesService.findMeasuresByCustomer(customerCode);
     }
-
-    const measures = await this.imagesService.findMeasuresByCustomerAndType(
-      customerCode,
-      measureType,
-    );
 
     if (!measures || measures.length === 0) {
       throw new NotFoundException({

@@ -32,6 +32,14 @@ export class ImagesService {
     return false;
   }
 
+  async findUser(customer_code: string) {
+    return await this.prisma.customer.findFirst({
+      where: {
+        code: customer_code,
+      },
+    });
+  }
+
   async create(payload: IUpload, appKey: string) {
     const image = await this.upload(payload.image, appKey);
 
@@ -44,7 +52,7 @@ export class ImagesService {
     const measure = await this.prisma.measure.create({
       data: {
         uuid: uuidv4(),
-        datetime: payload.measure_datetime,
+        datetime: new Date(payload.measure_datetime).toISOString(),
         type: payload.measure_type,
         has_confirmed: false,
         image_url: image.image_url,
@@ -77,7 +85,7 @@ export class ImagesService {
 
       return {
         image_url: file.uri,
-        measure_value: file.sizeBytes,
+        measure_value: Number(file.sizeBytes),
         created_at: file.createTime,
         updated_at: file.updateTime,
       };
@@ -99,6 +107,14 @@ export class ImagesService {
     await this.prisma.measure.update({
       where: { uuid: payload.measure_uuid },
       data: { has_confirmed: true, value: payload.confirmed_value },
+    });
+  }
+
+  async findMeasuresByCustomer(customerCode: string) {
+    return await this.prisma.measure.findMany({
+      where: {
+        customer: { code: customerCode },
+      },
     });
   }
 
