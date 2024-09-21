@@ -8,8 +8,6 @@ export class CustomersController {
 
   @Post()
   async upload(@Body() createCustomerDto: CreateCustomerDto) {
-    const customer = await this.customersService.create(createCustomerDto.code);
-
-    return customer;
+    return await this.customersService.create(createCustomerDto.code);
   }
 }

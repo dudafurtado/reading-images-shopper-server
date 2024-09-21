@@ -3,18 +3,17 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ImagesModule } from './images/images.module';
-import { CustomerModule } from './customers/customers.module';
-import { CustomersService } from './customers/customers.service';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
     ImagesModule,
+    CustomersModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CustomerModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CustomersService],
+  providers: [AppService],
 })
 export class AppModule {}

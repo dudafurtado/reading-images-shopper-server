@@ -7,5 +7,5 @@ export interface IUpload {
 
 export interface IConfirm {
   measure_uuid: string;
-  confirmed_value: string;
+  confirmed_value: number;
 }
