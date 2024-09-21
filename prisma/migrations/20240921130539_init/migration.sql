@@ -16,7 +16,7 @@ CREATE TABLE `measure` (
     `type` ENUM('WATER', 'GAS') NOT NULL,
     `has_confirmed` BOOLEAN NOT NULL,
     `image_url` VARCHAR(191) NULL,
-    `value` VARCHAR(191) NOT NULL,
+    `value` INTEGER NOT NULL,
     `customer_id` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,

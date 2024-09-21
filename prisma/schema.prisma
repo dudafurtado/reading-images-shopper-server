@@ -28,7 +28,7 @@ model Measure {
   type          MeasureType
   has_confirmed Boolean
   image_url     String?
-  value         String
+  value         Int
   customer      Customer    @relation(fields: [customer_id], references: [code])
   customer_id    String
   created_at    DateTime    @default(now())
